@@ -13,6 +13,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using API.Interfaces;
+using API.Servises;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using API.Exetentions;
 
 namespace API
 {
@@ -30,14 +36,12 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<DataContext>(n =>
-            {
-                n.UseSqlServer(_Config.GetConnectionString("DefaultConnection"));
-            }
-            );
+           services.AddApplicationServices(_Config);
 
             services.AddControllers();
             services.AddCors();
+           
+           services.AddIdentityServices(_Config);
 
             // services.AddSwaggerGen(c =>
             // {
@@ -61,7 +65,9 @@ namespace API
             app.UseRouting();
 
             app.UseCors(policy =>policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
-       
+            
+            app.UseAuthentication();
+           
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
