@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(registerDTO userData)
         {
-            if (await userExist(userData.UserName)) return BadRequest("User Name is Taken");
+            if (await userExist(userData.UserName)) return BadRequest("Username is Taken");
 
             // using statment is for desposed method in the hashind class
             using var hmac = new HMACSHA512();
