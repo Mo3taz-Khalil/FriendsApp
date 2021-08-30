@@ -18,6 +18,7 @@
     "module": "es2020",
     "strictPropertyInitialization":false,
     "lib": [
+      "es2019",
       "es2018",
       "dom"
     ]
