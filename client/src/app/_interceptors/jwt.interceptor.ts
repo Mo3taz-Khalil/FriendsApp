@@ -17,7 +17,7 @@ export class JWTInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-    let currentUser: User | null = { username: '', token: '' };
+    let currentUser: User | null = { username: '', token: '',photoUrl:'' };
 
     //we want to complete after recieve one current user --take-- so after it complete we are not subscribe to it anymore 
     this.accountservice.currentUser$.pipe(take(1)).subscribe(user => {

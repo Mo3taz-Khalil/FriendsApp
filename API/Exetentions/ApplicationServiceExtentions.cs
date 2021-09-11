@@ -11,15 +11,17 @@ namespace API.Exetentions
     public static class ApplicationServiceExtentions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-            IConfiguration Config)
+            IConfiguration config)
           {
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));//name of sction in app seeting.json
             services.AddScoped<ITokenService,TokenService>();
+            services.AddScoped<IPhotoService,PhotoService>();
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             services.AddDbContext<DataContext>(n =>
             {
-                n.UseSqlServer(Config.GetConnectionString("DefaultConnection"));
+                n.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
 
             return services;

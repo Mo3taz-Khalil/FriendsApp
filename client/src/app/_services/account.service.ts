@@ -9,41 +9,38 @@ import { User } from '../_models/user';
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  private currentUserSource = new ReplaySubject<User|null>(1);
-  currentUser$=this.currentUserSource.asObservable();
- 
+  private currentUserSource = new ReplaySubject<User | null>(1);
+  currentUser$ = this.currentUserSource.asObservable();
+
   constructor(private http: HttpClient) { }
 
   login(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
-      map((response:User ) => {
-        const user = response ;
-        if(user){
-          localStorage.setItem('user',JSON.stringify(user));
-          this.currentUserSource.next(user);
+      map((response: User) => {
+        const user = response;
+        if (user) {
+         this.setCurrentUser(user);
         }
       })
     )
-  }
-
-  register(model:any){
-    return this.http.post<User>(this.baseUrl+'account/register',model).pipe(
-      map(( user:User) => {
-        if(user){
-          localStorage.setItem('user',JSON.stringify(user));
-          this.currentUserSource.next(user);
-        }
-      })
-    )
-
   }
   
+  register(model: any) {
+    return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
+      map((user: User) => {
+        if (user) {
+          this.setCurrentUser(user);
+        }
+      })
+    )
+  }
 
-  setCurrentUser(user:User|null){
+  setCurrentUser(user: User | null) {
+    localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
   }
