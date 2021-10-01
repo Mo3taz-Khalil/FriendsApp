@@ -6,7 +6,7 @@ namespace API.Entities
 {
     public class AppUser
     {
-        #region properties
+       
         public int Id { get; set; }
         public string UserName { get; set; }
         public byte[] PasswordHash { get; set; }
@@ -23,18 +23,12 @@ namespace API.Entities
         public string Country { get; set; }
     
         public ICollection<Photo> Photos { get; set; }
+        public ICollection<UserLike> LikedByUsers { get; set; }
+        public ICollection<UserLike> LikedByMe { get; set; }
 
-        #endregion
+        
 
-        #region Methods
-
-        // public int GetAge() 
-        // {
-        //     return DateOfBirth.CalculateAge();
-        // }
-
-
-        #endregion
+       
 
 
 

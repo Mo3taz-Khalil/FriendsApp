@@ -17,6 +17,7 @@ namespace API.Exetentions
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));//name of sction in app seeting.json
             services.AddScoped<ITokenService,TokenService>();
             services.AddScoped<IPhotoService,PhotoService>();
+            services.AddScoped<ILikesRepositry,LikesRepository>();
             services.AddScoped<LogUserActivity>();
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);

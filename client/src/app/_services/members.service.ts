@@ -1,5 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 // import { url } from 'inspector';
 import { of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -21,7 +22,8 @@ export class MembersService {
   userParams: UserParams;
   user: User | null;
 
-  constructor(private http: HttpClient, private accountService: AccountService) {
+
+  constructor(private http: HttpClient, private accountService: AccountService,private router:Router) {
     this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
       this.user = user;
       this.userParams = new UserParams(user!);
@@ -79,6 +81,7 @@ export class MembersService {
     )
   }
 
+  //#region photo
   setMainPhoto(photoId: number) {
     return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
   }
@@ -87,6 +90,30 @@ export class MembersService {
     return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
   }
 
+  //#endregion
+
+  //#region  likes
+  addLike(username:string){
+    // 
+    
+      let currentUrl = this.router.url;
+      this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate([currentUrl]);          
+      });
+     
+   return this.http.post(this.baseUrl + "likes/"+username,{},{responseType: 'text'});
+  }
+
+  getLikes(predicate:string,pageNumber:number,pageSize:number){
+    let params = this.getPaginationParams(pageNumber,pageSize);
+    params=params.append('predicate',predicate);
+    return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl+'likes',params);
+  }
+
+  //#endregion
+
+
+  //#region pagination
   private getPaginatedResult<T>(Url: string, params: HttpParams) {
 
     const paginatedResult: PaginatedResult<T | null> = new PaginatedResult<T>();
@@ -109,6 +136,7 @@ export class MembersService {
 
     return params;
   }
+  //#endregion
 
 
 }
