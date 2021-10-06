@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { Member } from 'src/app/_models/member';
+import { Message } from 'src/app/_models/message';
+import { Pagination } from 'src/app/_models/Pagination';
 import { MembersService } from 'src/app/_services/members.service';
+import { MessageService } from 'src/app/_services/message.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -10,15 +14,30 @@ import { MembersService } from 'src/app/_services/members.service';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
+  //static makes it dynamic to be able to react to changes in our component
+  @ViewChild('memberTabs',{static:true}) memberTabs: TabsetComponent;
   member: Member;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+  activeTab: TabDirective;
+  messages: Message[] | null = [];
+  pageNumber = 1;
+  pageSize = 20;
+  pagination: Pagination;
 
-  constructor(private memberService: MembersService, private route: ActivatedRoute) { }
+
+  constructor(private memberService: MembersService, private route: ActivatedRoute,
+    private messageServices: MessageService) { }
 
   ngOnInit(): void {
 
-    this.loadMember();
+    this.route.data.subscribe(data=>{
+      this.member=data.member;
+    });
+
+    this.route.queryParams.subscribe(params=>{
+      params.tab ? this.selectTab(3) : this.selectTab(0);
+    });
 
     this.galleryOptions = [
       {
@@ -30,6 +49,7 @@ export class MemberDetailComponent implements OnInit {
         preview: false
       }
     ]
+    this.galleryImages = this.getImages();
 
   }
 
@@ -44,16 +64,31 @@ export class MemberDetailComponent implements OnInit {
     }
     return imgUrls;
   }
+//استخدمت الراوتر مكانها بس لسه السؤال موجود 
+  // loadMember() {
+  //   this.memberService.getmember(this.route.snapshot.paramMap.get('username')).subscribe(member => {
+  //     this.member = member;
+  //     //ليه متنفعش غير هنا مش بعد الكود ده ؟؟؟
+  //   })
+  //   //هنا يعني متنفعش ليه 
+  // }
 
-  loadMember() {
-    this.memberService.getmember(this.route.snapshot.paramMap.get('username')).subscribe(member => {
-      this.member = member;
-      //ليه متنفعش غير هنا مش بعد الكود ده ؟؟؟
-      this.galleryImages = this.getImages();
+  loadMessages() {
+    this.messageServices.getMessageThread(this.member.username, this.pageNumber, this.pageSize).subscribe(response => {
+      this.messages = response.result;
+      this.pagination = response.pagination;
     })
-//هنا يعني متنفعش ليه 
+  }
 
+  selectTab(tabId: number) {
+    this.memberTabs.tabs[tabId].active = true;
+  }
 
+  onTabActivated(date: TabDirective) {
+    this.activeTab = date;
+    if (this.activeTab.heading == 'Messages' && this.messages?.length === 0) {
+      this.loadMessages();
+    }
   }
 
 
