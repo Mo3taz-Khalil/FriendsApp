@@ -26,6 +26,11 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
 import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DateInputeComponent } from './_forms/date-inpute/date-inpute.component';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
+import { AdminPanelComponent } from './Admin/admin-panel/admin-panel.component';
+import { HadRoleDirective } from './_directives/had-role.directive';
+import { UserMangmentComponent } from './Admin/user-mangment/user-mangment.component';
+import { PhotoMangmentComponent } from './Admin/photo-mangment/photo-mangment.component';
+import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +50,12 @@ import { MemberMessagesComponent } from './members/member-messages/member-messag
     PhotoEditorComponent,
     TextInputComponent,
     DateInputeComponent,
-    MemberMessagesComponent
+    MemberMessagesComponent,
+    AdminPanelComponent,
+    HadRoleDirective,
+    UserMangmentComponent,
+    PhotoMangmentComponent,
+    RolesModalComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +72,6 @@ import { MemberMessagesComponent } from './members/member-messages/member-messag
     { provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent] 
 })
 export class AppModule { }

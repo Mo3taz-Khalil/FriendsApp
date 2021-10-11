@@ -35,6 +35,8 @@ namespace API.Data
         {
 
             var query = _context.Users.AsQueryable();
+            //هنا في مشكله لييه ؟
+            // لو عملت ريفريش بتتحل
             query = query.Where(n => n.UserName != userParams.currentUsername);
             query = query.Where(n => n.Gender == userParams.Gender);
 

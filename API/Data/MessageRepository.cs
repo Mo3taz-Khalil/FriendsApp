@@ -20,7 +20,7 @@ namespace API.Data
         public MessageRepository(DataContext context, IMapper mapper)
         {
             _Context = context;
-            _Mapper = mapper;
+            _Mapper = mapper;            
         }
 
         public void AddMassege(Message message)
@@ -39,7 +39,6 @@ namespace API.Data
                 .Include(x=>x.Sender)
                 .Include(x=>x.Recipient)
                 .SingleOrDefaultAsync(x=>x.Id==Id);
-
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
@@ -47,8 +46,6 @@ namespace API.Data
             var query = _Context.Messages
                  .OrderByDescending(m => m.MessageSent)
                  .AsQueryable();
-
-
 
             query = messageParams.Container switch
             {

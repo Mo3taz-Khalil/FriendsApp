@@ -29,6 +29,8 @@ export class MemberListComponent implements OnInit {
   ngOnInit(): void {
     this.loadMembers();
   }
+
+  
   loadMembers() {
     this.memberSrevices.setUserParams(this.userParams);
     this.memberSrevices.getmembers(this.userParams).subscribe(response => {
@@ -41,7 +43,7 @@ export class MemberListComponent implements OnInit {
      this.userParams = this.memberSrevices.resetUserParams();
     this.loadMembers();
   }
-
+ 
   pageChanged(event: any) {
     this.userParams.pageNumber = event.page;
     this.memberSrevices.setUserParams(this.userParams);
