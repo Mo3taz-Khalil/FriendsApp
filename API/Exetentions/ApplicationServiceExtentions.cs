@@ -2,6 +2,7 @@ using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Servises;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace API.Exetentions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration config)
           {
+            services.AddSingleton<PressenceTracker>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));//name of sction in app seeting.json
             services.AddScoped<ITokenService,TokenService>();
             services.AddScoped<IPhotoService,PhotoService>();

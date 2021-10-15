@@ -23,6 +23,11 @@ namespace API.Data
             _Mapper = mapper;            
         }
 
+        public void AddGroup(Group group)
+        {
+            _Context.Groups.Add(group);
+        }
+
         public void AddMassege(Message message)
         {
             _Context.Messages.Add(message);
@@ -33,12 +38,33 @@ namespace API.Data
             _Context.Messages.Remove(message);
         }
 
+        public async Task<Connection> GetConnection(string connectionId)
+        {
+            return await _Context.Connections.FindAsync(connectionId);
+        }
+
+        public async Task<Group> GetGroupForConnection(string connectionId)
+        {
+            return await _Context.Groups
+                .Include(c=>c.Connections)
+                .Where(c=>c.Connections.Any(x=>x.ConnectionId==connectionId))
+                .FirstOrDefaultAsync();
+
+        }
+
         public async Task<Message> GetMessage(int Id)
         {
             return await _Context.Messages
                 .Include(x=>x.Sender)
                 .Include(x=>x.Recipient)
                 .SingleOrDefaultAsync(x=>x.Id==Id);
+        }
+
+        public async Task<Group> GetMessageGroup(string GroupName)
+        {
+            return await _Context.Groups
+                .Include(x=>x.Connections)
+                .FirstOrDefaultAsync(x=>x.name==GroupName);
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
@@ -84,8 +110,8 @@ namespace API.Data
             if (unreadMessages.Any())
             {
                 foreach (var message in unreadMessages)
-                {
-                    message.DateRead = DateTime.Now;
+                {                    
+                    message.DateRead = DateTime.UtcNow;
                 }
                 await _Context.SaveChangesAsync();
             }
@@ -95,6 +121,11 @@ namespace API.Data
             return await PagedList<MessageDto>.CreatAsync(query, messageParams.PageNumber, messageParams.pageSize);
 
           //  return _Mapper.Map<IEnumerable<MessageDto>>(messages);    
+        }
+
+        public void RemoveConnection(Connection connection)
+        {
+            _Context.Connections.Remove(connection);
         }
 
         public async Task<bool> SaveAllAsynce()

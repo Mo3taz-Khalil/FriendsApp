@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Exetentions;
 using API.Middleware;
+using API.SignalR;
 
 namespace API
 {
@@ -44,6 +45,7 @@ namespace API
 
             //services.AddTransient<ExceptionMiddleware>();
             services.AddIdentityServices(_Config);
+            services.AddSignalR();
 
             // services.AddSwaggerGen(c =>
             // {
@@ -61,14 +63,17 @@ namespace API
             //     // app.UseSwagger();
             //     // app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             // }
-          //  app.ApplyExceptionMiddleware();
+            //  app.ApplyExceptionMiddleware();
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
+            app.UseCors(policy => policy.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithOrigins("https://localhost:4200"));
 
             app.UseAuthentication();
 
@@ -77,10 +82,11 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-
+                endpoints.MapHub<Pressencehub>("hubs/pressence");
+                endpoints.MapHub<MessageHub>("hubs/message");
             });
 
-            
+
         }
     }
 }
